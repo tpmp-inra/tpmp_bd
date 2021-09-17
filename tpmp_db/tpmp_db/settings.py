@@ -102,11 +102,20 @@ WSGI_APPLICATION = "tpmp_db.wsgi.application"
 # Database
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
 
-DATABASES = {"default": connect_data["local"]}
+# DATABASES = {
+#     # "default": connect_data["local"],
+#     "default": {
+#         "ENGINE": "django.db.backends.postgresql",
+#         "NAME": "tpmp_v2",
+#         "USER": "postgres",
+#         "PASSWORD": "",
+#         "HOST": "127.0.0.1",
+#         "PORT": "5432",
+#     }
+# }
 
-
-db_from_env = dj_database_url.config(conn_max_age=500)
-DATABASES["default"].update(db_from_env)
+DATABASES = {}
+DATABASES["default"].update(dj_database_url.config(conn_max_age=500))
 
 
 # Password validation
