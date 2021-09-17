@@ -1,0 +1,21 @@
+{% extends "base_generic.html" %}
+
+{% block content %}
+  <h1>TPMP database home</h1>
+  <p>Welcome to TPMP database manager</em>!</p>
+  <h2>Records available:</h2>
+  <ul>
+    <li><strong>Experiments:</strong> {{ num_exp }}</li>
+    <li><strong>Plants:</strong> {{ num_plant }}</li>
+    <li><strong>Weightings:</strong> {{ num_weighting }}</li>
+    <li><strong>Photos:</strong> {{ num_photo }}</li>
+    <li><strong>Persons:</strong> {{ num_person }}</li>
+    <li><strong>Analysis results:</strong> {{ num_anres }}</li>
+    <li><strong>Camera configuration files:</strong> {{ num_cam_conf }}</li>
+    <li><strong>Data ins:</strong> {{ num_datain }}</li>
+    <li><strong>Sensors:</strong> {{ num_sensor }}</li>
+    <li><strong>Annotations:</strong> {{ num_anno }}</li>
+    <li><strong>Measures:</strong> {{ num_measure }}</li>
+    <li><strong>Locations:</strong> {{ num_locations }}</li>
+  </ul>
+{% endblock %}

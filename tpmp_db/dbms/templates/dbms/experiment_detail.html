@@ -1,0 +1,30 @@
+{% extends "base_generic.html" %}
+
+{% block content %}
+  <h1>Experiment: {{ experiment.name }}</h1>
+
+  <p><strong>Researcher:</strong> <a href="">{{ experiment.researcher.to_string }}</a></p>
+  <p><strong>Referent:</strong> <a href="">{{ experiment.referent.to_string }}</a></p>
+  <strong>Allowed persons:</strong>
+  <ul>
+      {% for person in allowed_persons %}
+      <li>
+          <a href="">{{ person.to_string }}</a>
+      </li>
+      {% endfor %}
+  </ul>
+  <p><strong>Location:</strong> <a href="">{{ experiment.location.label }}</a></p>
+  <p><strong>Species:</strong> {{ experiment.species }}</p>
+  <p><strong>Interaction:</strong> {{ experiment.Interaction }}</p>
+  <p><strong>Date start:</strong> {{ experiment.date_start }}</p>
+  <p><strong>Date end:</strong> {{ experiment.date_end }}</p>
+  <p><strong>Description:</strong> {{ experiment.description }}</p>
+  <strong>Plants:</strong>
+  <ul>
+      {% for plant in plants %}
+      <li>
+          <a href="">{{ plant.to_string }}</a>
+      </li>
+      {% endfor %}
+  </ul>
+{% endblock %}

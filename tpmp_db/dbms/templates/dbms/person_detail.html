@@ -1,0 +1,10 @@
+{% extends "base_generic.html" %}
+
+{% block content %}
+  <h1>Experiment: {{ person.to_string }}</h1>
+
+  <p><strong>Name:</strong> {{ person.name }}</p>
+  <p><strong>Surname:</strong> {{ person.surname }}</p>
+  <p><strong>Affiliation:</strong> {{ person.affiliation }}</p>
+  <p><strong>Mail:</strong> {{ person.mail }}</p>
+{% endblock %}
