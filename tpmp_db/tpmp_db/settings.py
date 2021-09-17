@@ -115,7 +115,7 @@ WSGI_APPLICATION = "tpmp_db.wsgi.application"
 # }
 
 DATABASES = {}
-DATABASES["default"].update(dj_database_url.config(conn_max_age=500))
+DATABASES["default"] = dj_database_url.config(conn_max_age=500)
 
 
 # Password validation
