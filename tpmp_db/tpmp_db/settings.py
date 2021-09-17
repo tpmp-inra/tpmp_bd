@@ -16,7 +16,7 @@ import os
 # Heroku: Update database configuration from $DATABASE_URL.
 import dj_database_url
 
-from tpmp_db.connect_data import connect_data
+# from tpmp_db.connect_data import connect_data
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
