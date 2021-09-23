@@ -1,0 +1,48 @@
+{% extends "base_generic.html" %}
+
+{% block content %}
+  <h1>Plant: {{ plant.label }}</h1>
+
+  <p><strong>Name:</strong> {{ plant.name }}</p>
+  <p><strong>Species:</strong> {{ plant.species }}</p>
+  <p><strong>Treatment:</strong> {{ plant.treatment }}</p>
+  <p><strong>Experiment:</strong> <a href="{{plant.experiment.get_absolute_url}}">{{ plant.experiment.name }}</a></p>
+  <p><strong>Ecotype:</strong> {{ plant.ecotype }}</p>
+  <p><strong>Line:</strong> {{ plant.line }}</p>
+  <p><strong>Seed lot:</strong> {{ plant.seed_lot }}</p>
+  <p><strong>Type:</strong> {{ plant.type }}</p>
+
+  <div class="accordion" id="accordionExample">
+    <div class="accordion-item">
+      <h2 class="accordion-header" id="headingOne">
+        <button 
+          class="accordion-button" 
+          type="button" 
+          data-bs-toggle="collapse" 
+          data-bs-target="#collapseconffiles" 
+          aria-expanded="false" 
+          aria-controls="collapseconffiles"
+        >
+          Photos
+        </button>
+      </h2>
+      <div 
+        id="collapseconffiles" 
+        class="accordion-collapse collapse" 
+        aria-labelledby="headingOne" 
+        data-bs-parent="#accordionExample"
+      >
+        <div class="accordion-body">
+          <ul>
+              {% for photo in photos %}
+              <li>
+                  <a href="">{{ photo.filename }}</a>
+              </li>
+              {% endfor %}
+          </ul>
+        </div>
+      </div>
+    </div>    
+  </div>
+
+{% endblock %}

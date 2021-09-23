@@ -1,0 +1,34 @@
+{% extends "base_generic.html" %}
+
+{% block content %}
+  <h1>List of plants</h1>
+  {% if object_list %}
+    <table class="table table-striped table-hover table-sm">
+      <thead class="table-dark">
+          <th>Name</th>
+          <th>Species</th>
+          <th>Treatment</th>
+          <th>Experiment</th>
+          <th>Ecotype</th>
+          <th>Line</th>
+          <th>Seed lot</th>
+          <th>Type</th>
+      </thead>
+      {% for item in object_list %}
+        <tr> 
+            <td><a href="{{ item.get_absolute_url }}">{{ item.name }}</a></td>
+            <td>{{item.species}}</td>
+            <td>{{item.treatment}}</td>
+            <td><a href="{{item.experiment.get_absolute_url}}">{{ item.experiment.name }}</a></td>
+            <td>{{item.ecotype}}</td>
+            <td>{{item.line}}</td>
+            <td>{{item.seed_lot}}</td>
+            <td>{{item.type}}</td>
+        </tr>
+      {% endfor %}
+    </table>
+  {% else %}
+    <p>There are no {{objecttype}} in the database.</p>
+  {% endif %}
+{% endblock %}
+

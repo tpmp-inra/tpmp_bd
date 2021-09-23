@@ -1,0 +1,22 @@
+{% extends "base_generic.html" %}
+
+{% block content %}
+  <h1>{{h1title}}</h1>
+  {% if object_list %}
+    <table class="table table-striped table-hover table-sm">
+      <thead class="table-dark">
+          <th>Name</th>
+          <th>Website</th>
+      </thead>
+      {% for item in object_list %}
+        <tr> 
+            <td><a href="{{ item.get_absolute_url }}">{{ item.name }}</a></td>
+            <td><a href="https://{{item.website}}">{{ item.website }}</a></td>
+        </tr>
+      {% endfor %}
+    </table>
+  {% else %}
+    <p>There are no {{objecttype}} in the database.</p>
+  {% endif %}
+{% endblock %}
+

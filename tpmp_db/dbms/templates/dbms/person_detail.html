@@ -1,10 +1,10 @@
 {% extends "base_generic.html" %}
 
 {% block content %}
-  <h1>Experiment: {{ person.to_string }}</h1>
+  <h1>{{ person.to_string }}</h1>
 
-  <p><strong>Name:</strong> {{ person.name }}</p>
-  <p><strong>Surname:</strong> {{ person.surname }}</p>
-  <p><strong>Affiliation:</strong> {{ person.affiliation }}</p>
-  <p><strong>Mail:</strong> {{ person.mail }}</p>
+  <p><strong>Name:</strong> {{ person.user.first_name }}</p>
+  <p><strong>Surname:</strong> {{ person.user.last_name }}</p>
+  <p><strong>Organization:</strong> {{ person.organization.name }}</p>
+  <p><strong>Mail:</strong> {{ person.user.email }}</p>
 {% endblock %}

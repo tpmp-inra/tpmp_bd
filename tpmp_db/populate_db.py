@@ -1,7 +1,6 @@
 import os
 import random
 import datetime
-from datetime import datetime as dt
 
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "tpmp_db.settings")
 
@@ -14,6 +13,8 @@ import names
 from django.db import models
 from django.utils import timezone
 from django.test.utils import setup_test_environment
+
+from django.contrib.auth.models import User
 
 setup_test_environment()
 
@@ -33,9 +34,11 @@ TABLES = [
     md.Measure,
     md.Weighting,
     md.Photo,
+    md.Organization,
+    md.Project,
+    md.AnalysisProtocol,
+    User,
 ]
-
-ORGANIZATIONS = ["CNRS", "INRAE", "ADEME", "IFREMER"]
 
 SPECIES = ["tomato", "wheat", "sunflower", "arabidopsis"]
 INTERACTIONS = ["ralsto", "myc", None, "dc3000"]
@@ -52,36 +55,57 @@ def get_random(l: list):
 for table in TABLES:
     table.objects.all().delete()
 
+User.objects.create_user(
+    username="suser",
+    password="suser",
+    is_superuser=True,
+    is_staff=True,
+    is_active=True,
+)
 
-tpmp_staff = []
-for _ in range(4):
+organizations = []
+for org in ["CNRS", "INRAE", "ADEME", "IFREMER", "TPMP"]:
+    o = md.Organization(
+        name=org,
+        website=f"www.{org.lower()}.com",
+        description=f"Description for {org}",
+    )
+    o.save()
+    organizations.append(o)
+
+
+def get_user():
     n = names.get_first_name()
     s = names.get_last_name()
-    o = get_random(ORGANIZATIONS)
-    person = md.Person(name=n, surname=s, mail=f"{n}.{s}@inrae.fr", affiliation=o)
+    user_name = n[0].lower() + s.lower()
+    idx = 1
+    while len(User.objects.filter(username=user_name)) > 0:
+        idx += 1
+        user_name = n[0:idx].lower() + s.lower()
+    return User.objects.create_user(
+        username=user_name,
+        first_name=n,
+        last_name=s,
+        email=f"{n.lower()}.{s.lower()}@inrae.fr",
+        password="glass onion",
+    )
+
+
+tpmp_staff = []
+o = md.Organization.objects.filter(name="TPMP")[0]
+for _ in range(4):
+    person = md.Person(user=get_user(), organization=o)
     person.save()
     tpmp_staff.append(person)
 
-researchers = []
-for _ in range(5):
-    n = names.get_first_name()
-    s = names.get_last_name()
-    o = get_random(ORGANIZATIONS)
-    person = md.Person(name=n, surname=s, mail=f"{n}.{s}@{o.lower()}.fr", affiliation=o)
-    person.save()
-    researchers.append(person)
 
-ancillary_staff = []
-for _ in range(10):
-    n = names.get_first_name()
-    s = names.get_last_name()
-    o = get_random(ORGANIZATIONS)
-    person = md.Person(name=n, surname=s, mail=f"{n}.{s}@{o.lower()}.fr", affiliation=o)
-    person.save()
-    ancillary_staff.append(person)
-
-
-for loc in ["Phenopsis", "Phenoserre 1", "Phenoserre 2", "RobotRacine"]:
+for loc in [
+    "Phenopsis",
+    "Phenoserre 1",
+    "Phenoserre 2",
+    "Phenoserre cameras",
+    "RobotRacine",
+]:
     md.Location(label=loc, description=f"Description for {loc}").save()
 locations = md.Location.objects.all()
 
@@ -165,7 +189,10 @@ for file, camera, ts, desc in zip(
     ["Camera configuration 1", "Camera configuration 2", "Camera configuration 3"],
 ):
     cf = md.CameraConfigurationFile(
-        filename=file, camera=camera, timestamp=ts, description=desc
+        filename=file,
+        camera=camera,
+        timestamp=ts,
+        description=desc,
     )
     cf.save()
     cam_conf_files.append(cf)
@@ -181,37 +208,58 @@ for i in range(200):
         unit="°C",
     ).save()
 
+[
+    md.Person(
+        user=get_user(),
+        organization=organization,
+    ).save()
+    for organization in organizations
+]
+
+projects = []
+for cpt, organization in enumerate(organizations * 2):
+    researcher = md.Person.objects.filter(organization=organization)[0]
+    project = md.Project(
+        name=f"Project {cpt}",
+        researcher=researcher,
+        organization=organization,
+        species=get_random(SPECIES),
+        interaction=get_random(INTERACTIONS),
+        description=f"Description for Project {cpt}",
+    )
+    project.save()
+    participants = [
+        md.Person(user=get_user(), organization=organization)
+        for _ in range(random.randint(3, 10))
+    ]
+    [p.save() for p in participants]
+    project.participants.set(participants)
+    project.save()
+    projects.append(project)
 
 experiments = []
-EXP_COUNT = 26
-for exp_name in [f"exp_{i}" for i in range(EXP_COUNT)]:
+for count, project in enumerate(projects * 2):
     camera = get_random(cameras)
     camera_settings = md.CameraConfigurationFile.objects.filter(camera__id=camera.id)[0]
     scale = get_random(scales)
     exp = md.Experiment(
-        name=exp_name,
-        researcher=get_random(researchers),
+        name=f"{project.name}_EXP_{count}".replace(" ", "_"),
+        project=project,
         referent=get_random(tpmp_staff),
-        description=f"Description for {exp_name}",
-        cam_settings=camera_settings,
         location=camera.location,
-        species=get_random(SPECIES),
-        interaction=get_random(INTERACTIONS),
-        date_start=timezone.now() + datetime.timedelta(minutes=random.randint(10, 100)),
-        date_end=timezone.now() + datetime.timedelta(minutes=random.randint(10, 100)),
-    )
-    exp.save()
-    # exp.allowed_persons.add(get_random(ancillary_staff))
-    exp.allowed_persons.set(
-        [get_random(ancillary_staff) for _ in range(random.randint(2, 12))]
+        cam_settings=camera_settings,
+        date_start=timezone.now() + datetime.timedelta(minutes=count),
+        date_end=timezone.now()
+        + datetime.timedelta(minutes=count + random.randint(10, 100)),
+        description=f"Description for Experiment {count}",
     )
     exp.save()
     for i in range(random.randint(20, 30)):
         plant = md.Plant(
-            name=f"{exp.name}_p{i}",
+            name=f"{exp.name}_PLANT_{i}",
             experiment=exp,
-            species=exp.species,
-            treatment=exp.interaction if (i % 2) == 0 else "control",
+            species=exp.project.species,
+            treatment=exp.project.interaction if (i % 2) == 0 else "control",
             ecotype=get_random(ECOTYPES),
             line=get_random(LINES),
             seed_lot=get_random(SEED_LOT),
@@ -246,34 +294,60 @@ for exp_name in [f"exp_{i}" for i in range(EXP_COUNT)]:
 
 
 for file, experiment, ts, desc in zip(
-    [f"datain_{i}.csv" for i in range(EXP_COUNT)],
+    [f"datain_{i}.csv" for i in range(len(experiments))],
     experiments,
     [
         timezone.now() + datetime.timedelta(minutes=random.randint(0, 100))
-        for _ in range(EXP_COUNT)
+        for _ in range(len(experiments))
     ],
-    [f"DATA IN {i}" for i in range(EXP_COUNT)],
+    [f"DATA IN {i}" for i in range(len(experiments))],
 ):
-    md.DataIn(filename=file, experiment=experiment, timestamp=ts, description=desc).save()
+    md.DataIn(
+        filename=file,
+        experiment=experiment,
+        timestamp=ts,
+        description=desc,
+    ).save()
 
 
 for file, experiment, ts, desc in zip(
-    [f"ares_{i}.csv" for i in range(EXP_COUNT)],
+    [f"ares_{i}.csv" for i in range(len(experiments))],
     experiments,
     [
         timezone.now() + datetime.timedelta(minutes=random.randint(0, 100))
-        for _ in range(EXP_COUNT)
+        for _ in range(len(experiments))
     ],
-    [f"Analysis result {i}" for i in range(EXP_COUNT)],
+    [f"Analysis result {i}" for i in range(len(experiments))],
 ):
     md.AnalysisResult(
-        filename=file, experiment=experiment, timestamp=ts, description=desc
+        filename=file,
+        experiment=experiment,
+        timestamp=ts,
+        description=desc,
+    ).save()
+
+
+for file, experiment, ts, desc in zip(
+    [f"apro_{i}.csv" for i in range(len(experiments))],
+    experiments,
+    [
+        timezone.now() + datetime.timedelta(minutes=random.randint(0, 100))
+        for _ in range(len(experiments))
+    ],
+    [f"Analysis protocol {i}" for i in range(len(experiments))],
+):
+    md.AnalysisProtocol(
+        filename=file,
+        experiment=experiment,
+        timestamp=ts,
+        description=desc,
     ).save()
 
 
 tables = TABLES[:]
 tables.pop(tables.index(md.Annotation))
-for table in TABLES:
+tables.pop(tables.index(User))
+for table in tables:
     items = table.objects.all()
     count = table.objects.count()
     if count == 0:
@@ -283,7 +357,7 @@ for table in TABLES:
         md.Annotation(
             target_type=table.table_name(),
             target_id=item.id,
-            target_class_name=table.__class__.__name__,
+            target_class_name=table.__name__,
             level=md.Annotation.ANNOTATION_LEVELS[random.randint(0, 4)][0],
             timestamp=timezone.now() + datetime.timedelta(minutes=i),
             description=f"Annotation for {str(item)}",

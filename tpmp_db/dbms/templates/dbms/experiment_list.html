@@ -1,15 +1,30 @@
 {% extends "base_generic.html" %}
 
 {% block content %}
-  <h1>{{h1title}}</h1>
+  <h2>{{h1title}}</h2>
   {% if object_list %}
-  <ul>
-    {% for item in object_list %}
-      <li>
-        <a href="{{ item.get_absolute_url }}">{{ item.name }}</a> researcher: {{ item.researcher.to_string }}, referent: {{ item.referent.to_string }}
-      </li>
-    {% endfor %}
-  </ul>
+    <table class="table table-striped table-hover table-sm">
+      <thead class="table-dark">
+          <th>Name</th>
+          <th>Project</th>
+          <th>Researcher</th>
+          <th>Referent</th>
+          <th>Location</th>
+          <th>Species</th>
+          <th>Interaction</th>
+      </thead>
+      {% for item in object_list %}
+        <tr> 
+            <td><a href="{{ item.get_absolute_url }}">{{ item.name }}</a></td>
+            <td><a href="{{ item.project.get_absolute_url }}">{{ item.project.name }}</a></td>
+            <td><a href="{{item.project.researcher.get_absolute_url}}">{{ item.project.researcher.to_string }}</a></td>
+            <td><a href="{{item.referent.get_absolute_url}}">{{ item.referent.to_string }}</a></td>
+            <td><a href="{{item.location.get_absolute_url}}">{{ item.location.label }}</a></td>
+            <td>{{item.project.species}}</td>
+            <td>{{item.project.interaction}}</td>
+        </tr>
+      {% endfor %}
+    </table>
   {% else %}
     <p>There are no {{objecttype}} in the database.</p>
   {% endif %}

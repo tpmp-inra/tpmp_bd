@@ -3,28 +3,77 @@
 {% block content %}
   <h1>Experiment: {{ experiment.name }}</h1>
 
-  <p><strong>Researcher:</strong> <a href="">{{ experiment.researcher.to_string }}</a></p>
-  <p><strong>Referent:</strong> <a href="">{{ experiment.referent.to_string }}</a></p>
-  <strong>Allowed persons:</strong>
-  <ul>
-      {% for person in allowed_persons %}
-      <li>
-          <a href="">{{ person.to_string }}</a>
-      </li>
-      {% endfor %}
-  </ul>
-  <p><strong>Location:</strong> <a href="">{{ experiment.location.label }}</a></p>
-  <p><strong>Species:</strong> {{ experiment.species }}</p>
-  <p><strong>Interaction:</strong> {{ experiment.Interaction }}</p>
+  <p><strong>Researcher:</strong> <a href="{{experiment.project.researcher.get_absolute_url}}">{{ experiment.project.researcher.to_string }}</a></p>
+  <p><strong>Referent:</strong> <a href="{{experiment.referent.get_absolute_url}}">{{ experiment.referent.to_string }}</a></p>
+  <div class="accordion" id="accordionExample">
+    <div class="accordion-item">
+      <h2 class="accordion-header" id="headingOne">
+        <button 
+          class="accordion-button" 
+          type="button" 
+          data-bs-toggle="collapse" 
+          data-bs-target="#collapseconffiles" 
+          aria-expanded="false" 
+          aria-controls="collapseconffiles"
+        >
+          Participants
+        </button>
+      </h2>
+      <div 
+        id="collapseconffiles" 
+        class="accordion-collapse collapse" 
+        aria-labelledby="headingOne" 
+        data-bs-parent="#accordionExample"
+      >
+        <div class="accordion-body">
+          <ul>
+            {% for person in participants %}
+            <li>
+                <a href="{{person.get_absolute_url}}">{{ person.to_string }}</a>
+            </li>
+            {% endfor %}
+          </ul>
+        </div>
+      </div>
+    </div>    
+  </div>
+  <p><strong>Project:</strong> <a href="{{experiment.project.get_absolute_url}}">{{ experiment.project.name }}</a></p>
+  <p><strong>Location:</strong> <a href="{{experiment.location.get_absolute_url}}">{{ experiment.location.label }}</a></p>
+  <p><strong>Species:</strong> {{ experiment.project.species }}</p>
+  <p><strong>Interaction:</strong> {{ experiment.project.interaction }}</p>
   <p><strong>Date start:</strong> {{ experiment.date_start }}</p>
   <p><strong>Date end:</strong> {{ experiment.date_end }}</p>
   <p><strong>Description:</strong> {{ experiment.description }}</p>
-  <strong>Plants:</strong>
-  <ul>
-      {% for plant in plants %}
-      <li>
-          <a href="">{{ plant.to_string }}</a>
-      </li>
-      {% endfor %}
-  </ul>
+  <div class="accordion" id="accordionExample">
+    <div class="accordion-item">
+      <h2 class="accordion-header" id="headingOne">
+        <button 
+          class="accordion-button" 
+          type="button" 
+          data-bs-toggle="collapse" 
+          data-bs-target="#collapseconffiles" 
+          aria-expanded="false" 
+          aria-controls="collapseconffiles"
+        >
+          Plants
+        </button>
+      </h2>
+      <div 
+        id="collapseconffiles" 
+        class="accordion-collapse collapse" 
+        aria-labelledby="headingOne" 
+        data-bs-parent="#accordionExample"
+      >
+        <div class="accordion-body">
+            <ul>
+                {% for plant in plants %}
+                <li>
+                    <a href="plant.get_absolute_url">{{ plant.to_string }}</a>
+                </li>
+                {% endfor %}
+            </ul>
+        </div>
+      </div>
+    </div>    
+  </div>
 {% endblock %}

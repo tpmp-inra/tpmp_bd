@@ -1,0 +1,46 @@
+{% extends "base_generic.html" %}
+
+{% block content %}
+  <h1>Project: {{ project.name }}</h1>
+
+  <p><strong>Researcher:</strong> <a href="{{project.researcher.get_absolute_url}}">{{ project.researcher.to_string }}</a></p>
+  <p><strong>Organization:</strong> <a href="">{{ project.organization.name }}</a></p>
+  <div class="accordion" id="accordionExample">
+    <div class="accordion-item">
+      <h2 class="accordion-header" id="headingOne">
+        <button 
+          class="accordion-button" 
+          type="button" 
+          data-bs-toggle="collapse" 
+          data-bs-target="#collapseconffiles" 
+          aria-expanded="false" 
+          aria-controls="collapseconffiles"
+        >
+          Experiments
+        </button>
+      </h2>
+      <div 
+        id="collapseconffiles" 
+        class="accordion-collapse collapse" 
+        aria-labelledby="headingOne" 
+        data-bs-parent="#accordionExample"
+      >
+        <div class="accordion-body">
+          <ul>
+            {% for experiment in experiments %}
+            <li>
+                <a href="{{experiment.get_absolute_url}}">{{experiment.name}}</a>
+            </li>
+            {% endfor %}
+          </ul>
+        </div>
+      </div>
+    </div>    
+  </div>
+  <p><strong>Species:</strong> {{ project.species }}</p>
+  <p><strong>Interaction:</strong> {{ project.interaction }}</p>
+  <p><strong>Description:</strong> {{ project.description }}</p>
+  <strong>Experiments:</strong> 
+
+  
+{% endblock %}

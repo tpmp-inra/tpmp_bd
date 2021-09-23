@@ -1,0 +1,10 @@
+{% extends "base_generic.html" %}
+
+{% block content %}
+  <h1>{{kind}}: for experiment {{ experiment.name }}</h1>
+
+  <p><strong>Experiment:</strong> <a href="{{ experiment.get_absolute_url }}">{{ experiment.name }}</a></p>
+  <p><strong>File:</strong> {{ object_detail.filename }}</p>
+  <p><strong>Date time:</strong> {{ object_detail.timestamp }}</p>
+  <p><strong>Description:</strong> {{ object_detail.description }}</p>
+{% endblock %}

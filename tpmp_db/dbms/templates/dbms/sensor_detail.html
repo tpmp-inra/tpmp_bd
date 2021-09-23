@@ -1,0 +1,47 @@
+{% extends "base_generic.html" %}
+
+{% block content %}
+  <h1>Sensor: {{ sensor.label }}</h1>
+
+  <p><strong>Sensor:</strong> {{ sensor.label }}</p>
+  <p><strong>Type:</strong> {{ sensor.type }}</p>
+  <p><strong>Maker:</strong> {{ sensor.maker }}</p>
+  <p><strong>Model:</strong> {{ sensor.model }}</p>
+  <p><strong>Date added:</strong> {{ sensor.date_added }}</p>
+  <p><strong>State:</strong> {{ sensor.state }}</p>
+  <p><strong>Location:</strong> <a href="{{sensor.location.get_absolute_url}}">{{ sensor.location.label }}</a></p>  
+
+  <div class="accordion" id="accordionExample">
+    <div class="accordion-item">
+      <h2 class="accordion-header" id="headingOne">
+        <button 
+          class="accordion-button" 
+          type="button" 
+          data-bs-toggle="collapse" 
+          data-bs-target="#collapseconffiles" 
+          aria-expanded="false" 
+          aria-controls="collapseconffiles"
+        >
+          Configuration files
+        </button>
+      </h2>
+      <div 
+        id="collapseconffiles" 
+        class="accordion-collapse collapse" 
+        aria-labelledby="headingOne" 
+        data-bs-parent="#accordionExample"
+      >
+        <div class="accordion-body">
+          <ul>
+              {% for ccf in ccfs %}
+              <li>
+                  <a href="">{{ ccf.filename }}</a>
+              </li>
+              {% endfor %}
+          </ul>
+        </div>
+      </div>
+    </div>    
+  </div>
+
+{% endblock %}

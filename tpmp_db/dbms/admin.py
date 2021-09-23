@@ -1,5 +1,7 @@
 from django.contrib import admin
 from django.contrib.admin.decorators import display
+from django.contrib.auth.models import User
+from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 
 from .models import (
     Annotation,
@@ -14,18 +16,15 @@ from .models import (
     Measure,
     Weighting,
     Photo,
+    Organization,
+    Project,
+    AnalysisProtocol,
 )
 
 
-class ExperienceReferentInline(admin.TabularInline):
-    model = Experiment
-    fk_name = "referent"
+class BaseInline(admin.TabularInline):
     extra = 0
-    filter_horizontal = ("allowed_persons",)
-    exclude = ("date_start", "date_end", "description", "allowed_persons", "guid")
     can_delete = False
-    verbose_name = "Referent in experience"
-    verbose_name_plural = "Referent in experiences"
     max_num = 10
 
     def has_change_permission(self, request, obj=None):
@@ -38,48 +37,40 @@ class ExperienceReferentInline(admin.TabularInline):
         return False
 
 
-class ExperienceResearcherInline(admin.TabularInline):
+class EmployeeInline(admin.StackedInline):
+    model = Person
+    verbose_name_plural = "person"
+
+
+class ExperienceInline(BaseInline):
     model = Experiment
-    fk_name = "researcher"
-    extra = 0
-    filter_horizontal = ("allowed_persons",)
-    exclude = ("date_start", "date_end", "description", "allowed_persons", "guid")
-    can_delete = False
-    verbose_name = "Researcher in experience"
-    verbose_name_plural = "Researcher in experiences"
-    max_num = 10
-
-    def has_change_permission(self, request, obj=None):
-        return False
-
-    def has_add_permission(self, request, obj=None):
-        return False
-
-    def has_delete_permission(self, request, obj=None):
-        return False
+    verbose_name = "Experiment"
+    verbose_name_plural = "Experiments"
 
 
-class PlantInline(admin.TabularInline):
+class PlantInline(BaseInline):
     model = Plant
-    extra = 0
-    max_num = 10
-
-    def has_change_permission(self, request, obj=None):
-        return False
-
-    def has_add_permission(self, request, obj=None):
-        return False
-
-    def has_delete_permission(self, request, obj=None):
-        return False
 
 
-@admin.register(Person)
-class PersonAdmin(admin.ModelAdmin):
-    list_display = ("name", "surname", "mail", "affiliation")
-    list_filter = ("affiliation",)
-    fields = [("name", "surname"), "mail", "affiliation"]
-    inlines = [ExperienceReferentInline, ExperienceResearcherInline]
+class OrganizationInline(BaseInline):
+    model = Organization
+
+
+class ProjectInline(BaseInline):
+    model = Project
+
+
+class PersonInline(admin.StackedInline):
+    model = Person
+    verbose_name_plural = "persons"
+
+
+admin.site.unregister(User)
+
+
+@admin.register(User)
+class UserAdmin(BaseUserAdmin):
+    inlines = (PersonInline,)
 
 
 @admin.register(Location)
@@ -103,36 +94,45 @@ class CameraConfigurationFileAdmin(admin.ModelAdmin):
 class ExperimentAdmin(admin.ModelAdmin):
     list_display = (
         "name",
-        "researcher",
+        "project",
         "referent",
         "location",
         "cam_settings",
-        "species",
-        "interaction",
         "date_start",
         "date_end",
     )
-    list_filter = (
-        "location",
-        "species",
-        "interaction",
-        "cam_settings",
-        "researcher",
-        "referent",
-    )
+    list_filter = ("location", "cam_settings", "referent")
     fields = [
         "name",
-        ("researcher", "referent"),
+        "project",
+        "referent",
         "location",
         "cam_settings",
-        ("species", "interaction"),
-        "allowed_persons",
         ("date_start", "date_end"),
         "description",
         "guid",
     ]
-    filter_horizontal = ("allowed_persons",)
     inlines = [PlantInline]
+
+
+@admin.register(Organization)
+class OrganizationAdmin(admin.ModelAdmin):
+    list_display = ("name", "website", "description")
+    inlines = [ProjectInline]
+
+
+@admin.register(Project)
+class ProjectAdmin(admin.ModelAdmin):
+    list_display = (
+        "name",
+        "researcher",
+        "organization",
+        "species",
+        "interaction",
+    )
+    list_filter = ("researcher", "organization", "species", "interaction")
+    filter_horizontal = ("participants",)
+    inlines = [ExperienceInline]
 
 
 @admin.register(DataIn)
@@ -145,6 +145,16 @@ class DataInAdmin(admin.ModelAdmin):
 
 
 @admin.register(AnalysisResult)
+class AnalysisResultAdmin(admin.ModelAdmin):
+    list_display = (
+        "experiment",
+        "filename",
+        "timestamp",
+    )
+    list_filter = ("experiment",)
+
+
+@admin.register(AnalysisProtocol)
 class AnalysisResultAdmin(admin.ModelAdmin):
     list_display = (
         "experiment",
@@ -200,4 +210,10 @@ class PhotoAdmin(admin.ModelAdmin):
 
 @admin.register(Annotation)
 class AnnotationAdmin(admin.ModelAdmin):
-    list_display = ("target_id", "target_type", "level")
+    list_display = (
+        "short_description_string",
+        "timestamp",
+        "target_type",
+        "level",
+    )
+    list_filter = ("target_type", "level")

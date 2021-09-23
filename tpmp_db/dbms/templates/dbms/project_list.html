@@ -1,0 +1,27 @@
+{% extends "base_generic.html" %}
+
+{% block content %}
+  <h1>List of projects</h1>
+  {% if object_list %}
+    <table class="table table-striped table-hover table-sm">
+      <thead class="table-dark">
+          <th>Name</th>
+          <th>Researcher</th>
+          <th>Species</th>
+          <th>Interaction</th>
+          <th>Organization</th>
+      </thead>
+      {% for item in object_list %}
+        <tr> 
+            <td><a href="{{ item.get_absolute_url }}">{{ item.name }}</a></td>
+            <td><a href="{{item.researcher.get_absolute_url}}">{{ item.researcher.to_string }}</a></td>
+            <td>{{item.species}}</td>
+            <td>{{item.interaction}}</td>
+            <td><a href="{{item.organization.get_absolute_url}}">{{ item.organization.to_string }}</a></td>
+        </tr>
+      {% endfor %}
+    </table>
+  {% else %}
+    <p>There are no projects in the database.</p>
+  {% endif %}
+{% endblock %}

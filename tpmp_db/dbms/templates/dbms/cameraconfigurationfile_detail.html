@@ -1,0 +1,42 @@
+{% extends "base_generic.html" %}
+
+{% block content %}
+  <h1>Camera configuration file for: {{ cameraconfigurationfile.camera.name }}</h1>
+
+  <p><strong>Camera:</strong> <a href="{{ cameraconfigurationfile.camera.get_absolute_url }}">{{ cameraconfigurationfile.camera.label }}</a></p>
+  <p><strong>File:</strong> {{ cameraconfigurationfile.filename }}</p>
+  <p><strong>Date time:</strong> {{ cameraconfigurationfile.timestamp }}</p>
+  <p><strong>Description:</strong> {{ cameraconfigurationfile.description }}</p>
+  <div class="accordion" id="accordionExample">
+    <div class="accordion-item">
+      <h2 class="accordion-header" id="headingOne">
+        <button 
+          class="accordion-button" 
+          type="button" 
+          data-bs-toggle="collapse" 
+          data-bs-target="#collapseconffiles" 
+          aria-expanded="false" 
+          aria-controls="collapseconffiles"
+        >
+          Experiments
+        </button>
+      </h2>
+      <div 
+        id="collapseconffiles" 
+        class="accordion-collapse collapse" 
+        aria-labelledby="headingOne" 
+        data-bs-parent="#accordionExample"
+      >
+        <div class="accordion-body">
+          <ul>
+              {% for experiment in experiments %}
+              <li>
+                  <a href="{{experiment.get_absolute_url}}">{{experiment.name}}</a>
+              </li>
+              {% endfor %}
+          </ul>
+        </div>
+      </div>
+    </div>    
+  </div>
+{% endblock %}

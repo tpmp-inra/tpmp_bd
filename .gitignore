@@ -141,3 +141,5 @@ cython_debug/
 .vscode
 
 backups
+tpmp_db/tpmp_db/connect_data.py
+tpmp_db.rar

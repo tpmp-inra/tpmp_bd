@@ -3,17 +3,119 @@ from django.urls import path
 from . import views
 
 urlpatterns = [
-    path("", views.index, name="index"),
-    path("experiments/", views.ExperimentListView.as_view(), name="experiments"),
     path(
-        "experiment/<int:pk>",
-        views.ExperimentDetailView.as_view(),
+        route="",
+        view=views.index,
+        name="index",
+    ),
+    path(
+        route="experiments/",
+        view=views.ExperimentListView.as_view(),
+        name="experiments",
+    ),
+    path(
+        route="experiment/<int:pk>",
+        view=views.ExperimentDetailView.as_view(),
         name="experiment-detail",
     ),
-    path("persons/", views.PersonListView.as_view(), name="persons"),
     path(
-        "person/<int:pk>",
-        views.PersonDetailView.as_view(),
+        route="persons/",
+        view=views.PersonListView.as_view(),
+        name="persons",
+    ),
+    path(
+        route="person/<int:pk>",
+        view=views.PersonDetailView.as_view(),
         name="person-detail",
+    ),
+    path(
+        route="locations/",
+        view=views.LocationListView.as_view(),
+        name="locations",
+    ),
+    path(
+        route="location/<int:pk>",
+        view=views.LocationDetailView.as_view(),
+        name="location-detail",
+    ),
+    path(
+        route="datains/",
+        view=views.DataInListView.as_view(),
+        name="datains",
+    ),
+    path(
+        route="datain/<int:pk>",
+        view=views.DataInDetailView.as_view(),
+        name="datain-detail",
+    ),
+    path(
+        route="analysisresults/",
+        view=views.AnalysisResultListView.as_view(),
+        name="analysisresults",
+    ),
+    path(
+        route="analysisresult/<int:pk>",
+        view=views.AnalysisResultDetailView.as_view(),
+        name="analysisresult-detail",
+    ),
+    path(
+        route="analysisprotocols/",
+        view=views.AnalysisProtocolListView.as_view(),
+        name="analysisprotocols",
+    ),
+    path(
+        route="analysisprotocol/<int:pk>",
+        view=views.AnalysisProtocolDetailView.as_view(),
+        name="analysisprotocol-detail",
+    ),
+    path(
+        route="projects/",
+        view=views.ProjectListView.as_view(),
+        name="projects",
+    ),
+    path(
+        route="project/<int:pk>",
+        view=views.ProjectDetailView.as_view(),
+        name="project-detail",
+    ),
+    path(
+        route="organizations/",
+        view=views.OrganizationListView.as_view(),
+        name="organizations",
+    ),
+    path(
+        route="organization/<int:pk>",
+        view=views.OrganizationDetailView.as_view(),
+        name="organization-detail",
+    ),
+    path(
+        route="sensors/",
+        view=views.SensorListView.as_view(),
+        name="sensors",
+    ),
+    path(
+        route="sensor/<int:pk>",
+        view=views.SensorDetailView.as_view(),
+        name="sensor-detail",
+    ),
+    path(
+        route="cameraconfigurationfiles/",
+        view=views.CameraConfigurationFileListView.as_view(),
+        name="cameraconfigurationfiles",
+    ),
+    path(
+        route="cameraconfigurationfile/<int:pk>",
+        view=views.CameraConfigurationFileDetailView.as_view(),
+        name="cameraconfigurationfile-detail",
+    ),
+    path(
+        route="plants",
+        view=views.PlantListView.as_view(),
+        name="plants",
+    ),
+    path(
+        route="plant/<int:pk>",
+        view=views.PlantDetailView.as_view(),
+        name="plant-detail",
     ),
 ]
